@@ -736,10 +736,11 @@ function initBot() {
         'weatherCelsiusLow',
         'number',
       );
+      insertNewValue(result['precipIntensity'], ctx, 'weatherRain', 'number');
       insertNewValue(
-        result['precipAccumulation'],
+        result['precipProbability'],
         ctx,
-        'weatherRain',
+        'weatherRainProbability',
         'number',
       );
       insertNewValue(result['humidity'], ctx, 'weatherHumidity', 'number');
