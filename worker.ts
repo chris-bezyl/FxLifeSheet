@@ -1,14 +1,14 @@
 // Third party dependencies
-const moment = require("moment");
-var needle = require("needle");
-const { Router, Markup, Extra } = require("telegraf");
+const moment = require('moment');
+var needle = require('needle');
+const { Router, Markup, Extra } = require('telegraf');
 
 // Internal dependencies
-let config = require("./classes/config.js");
-let google_sheets = require("./classes/google_sheets.js");
-let telegram = require("./classes/telegram.js");
+let config = require('./classes/config.js');
+let google_sheets = require('./classes/google_sheets.js');
+let telegram = require('./classes/telegram.js');
 
-import { Command, QuestionToAsk } from "./classes/config.js";
+import { Command, QuestionToAsk } from './classes/config.js';
 
 let bot = telegram.bot;
 
@@ -28,27 +28,27 @@ google_sheets.setupGoogleSheets(function(rawDataSheetRef, lastRunSheetRef) {
 
 function getButtonText(number) {
   let emojiNumber = {
-    "0": "0️⃣",
-    "1": "1️⃣",
-    "2": "2️⃣",
-    "3": "3️⃣",
-    "4": "4️⃣",
-    "5": "5️⃣"
+    '0': '0️⃣',
+    '1': '1️⃣',
+    '2': '2️⃣',
+    '3': '3️⃣',
+    '4': '4️⃣',
+    '5': '5️⃣',
   }[number];
 
   if (currentlyAskedQuestionObject.buttons == null) {
     // Assign default values
     currentlyAskedQuestionObject.buttons = {
-      "0": "Terrible",
-      "1": "Bad",
-      "2": "Okay",
-      "3": "Good",
-      "4": "Great",
-      "5": "Excellent"
+      '0': 'Terrible',
+      '1': 'Bad',
+      '2': 'Okay',
+      '3': 'Good',
+      '4': 'Great',
+      '5': 'Excellent',
     };
   }
 
-  return emojiNumber + " " + currentlyAskedQuestionObject.buttons[number];
+  return emojiNumber + ' ' + currentlyAskedQuestionObject.buttons[number];
 }
 
 function printGraph(
@@ -56,14 +56,14 @@ function printGraph(
   ctx,
   numberOfRecentValuesToPrint,
   additionalValue,
-  skipImage
+  skipImage,
 ) {
   // additionalValue is the value that isn't part of the sheet yet
   // as it was *just* entered by the user
   let loadingMessageID = null;
 
   if (numberOfRecentValuesToPrint > 0) {
-    ctx.reply("Loading history...").then(({ message_id }) => {
+    ctx.reply('Loading history...').then(({ message_id }) => {
       loadingMessageID = message_id;
     });
   }
@@ -72,9 +72,9 @@ function printGraph(
     {
       offset: 0,
       limit: 100,
-      orderby: "timestamp",
+      orderby: 'timestamp',
       reverse: true,
-      query: "key=" + key
+      query: 'key=' + key,
     },
     function(error, rows) {
       if (error) {
@@ -92,10 +92,10 @@ function printGraph(
         let time = moment(Number(rows[i].timestamp));
         let value = Number(rows[i].value);
         allValues.unshift(value);
-        allTimes.unshift(time.format("MM-DD"));
+        allTimes.unshift(time.format('MM-DD'));
 
         if (i < numberOfRecentValuesToPrint - 1) {
-          rawText.unshift(time.format("YYYY-MM-DD") + ": " + value.toFixed(2));
+          rawText.unshift(time.format('YYYY-MM-DD') + ': ' + value.toFixed(2));
         }
 
         if (value < minimum) {
@@ -111,9 +111,9 @@ function printGraph(
         allTimes.push(moment());
 
         rawText.push(
-          moment().format("YYYY-MM-DD") +
-            ": " +
-            Number(additionalValue).toFixed(2)
+          moment().format('YYYY-MM-DD') +
+            ': ' +
+            Number(additionalValue).toFixed(2),
         );
       }
 
@@ -123,7 +123,11 @@ function printGraph(
           ctx.update.message.chat.id,
           loadingMessageID,
           null,
-          rawText.join("\n") + "\nMinimum: " + minimum + "\nMaximum: " + maximum
+          rawText.join('\n') +
+            '\nMinimum: ' +
+            minimum +
+            '\nMaximum: ' +
+            maximum,
         );
       }
 
@@ -133,28 +137,28 @@ function printGraph(
         maximum += 2;
 
         let url =
-          "https://chart.googleapis.com/chart?cht=lc&chd=t:" +
-          allValues.join(",") +
-          "&chs=800x350&chl=" +
-          allTimes.join("%7C") +
-          "&chtt=" +
+          'https://chart.googleapis.com/chart?cht=lc&chd=t:' +
+          allValues.join(',') +
+          '&chs=800x350&chl=' +
+          allTimes.join('%7C') +
+          '&chtt=' +
           key +
-          "&chf=bg,s,e0e0e0&chco=000000,0000FF&chma=30,30,30,30&chds=" +
+          '&chf=bg,s,e0e0e0&chco=000000,0000FF&chma=30,30,30,30&chds=' +
           minimum +
-          "," +
+          ',' +
           maximum;
         console.log(url);
         ctx.replyWithPhoto({
-          url: url
+          url: url,
         });
       }
-    }
+    },
   );
 }
 
 function triggerNextQuestionFromQueue(ctx) {
   let keyboard = Extra.markup(m => m.removeKeyboard()); // default keyboard
-  let questionAppendix = "";
+  let questionAppendix = '';
 
   currentlyAskedQuestionObject = currentlyAskedQuestionQueue.shift();
 
@@ -165,11 +169,11 @@ function triggerNextQuestionFromQueue(ctx) {
   }
 
   if (currentlyAskedQuestionObject.question == null) {
-    console.error("No text defined for");
+    console.error('No text defined for');
     console.error(currentlyAskedQuestionObject);
   }
 
-  if (currentlyAskedQuestionObject.type == "header") {
+  if (currentlyAskedQuestionObject.type == 'header') {
     // This is information only, just print and go to the next one
     ctx
       .reply(currentlyAskedQuestionObject.question, keyboard)
@@ -183,54 +187,54 @@ function triggerNextQuestionFromQueue(ctx) {
   // - No way to use `force_reply` together with a custom keyboard (https://github.com/KrauseFx/FxLifeSheet/issues/5)
   // - No way to update existing messages together with a custom keyboard https://core.telegram.org/bots/api#updating-messages
 
-  if (currentlyAskedQuestionObject.type == "range") {
+  if (currentlyAskedQuestionObject.type == 'range') {
     let allButtons = [
-      [getButtonText("5")],
-      [getButtonText("4")],
-      [getButtonText("3")],
-      [getButtonText("2")],
-      [getButtonText("1")],
-      [getButtonText("0")]
+      [getButtonText('5')],
+      [getButtonText('4')],
+      [getButtonText('3')],
+      [getButtonText('2')],
+      [getButtonText('1')],
+      [getButtonText('0')],
     ];
     shuffleArray(allButtons);
     keyboard = Markup.keyboard(allButtons)
       .oneTime()
       .extra();
-  } else if (currentlyAskedQuestionObject.type == "boolean") {
-    keyboard = Markup.keyboard([["1: Yes"], ["0: No"]])
+  } else if (currentlyAskedQuestionObject.type == 'boolean') {
+    keyboard = Markup.keyboard([['1: Yes'], ['0: No']])
       .oneTime()
       .extra();
-  } else if (currentlyAskedQuestionObject.type == "text") {
+  } else if (currentlyAskedQuestionObject.type == 'text') {
     // use the default keyboard we set here anyway
     questionAppendix +=
-      "You can use a Bear note, and then paste the deep link to the note here";
-  } else if (currentlyAskedQuestionObject.type == "location") {
+      'You can use a Bear note, and then paste the deep link to the note here';
+  } else if (currentlyAskedQuestionObject.type == 'location') {
     keyboard = Extra.markup(markup => {
       return markup.keyboard([
-        markup.locationRequestButton("📡 Send location")
+        markup.locationRequestButton('📡 Send location'),
       ]);
     });
   }
 
-  questionAppendix = currentlyAskedQuestionQueue.length + " more question";
+  questionAppendix = currentlyAskedQuestionQueue.length + ' more question';
   if (currentlyAskedQuestionQueue.length != 1) {
-    questionAppendix += "s";
+    questionAppendix += 's';
   }
   if (currentlyAskedQuestionQueue.length == 0) {
-    questionAppendix = "last question";
+    questionAppendix = 'last question';
   }
 
   let question =
-    currentlyAskedQuestionObject.question + " (" + questionAppendix + ")";
+    currentlyAskedQuestionObject.question + ' (' + questionAppendix + ')';
 
   ctx.reply(question, keyboard).then(({ message_id }) => {
     currentlyAskedQuestionMessageId = message_id;
   });
 
   if (
-    currentlyAskedQuestionObject.type == "number" ||
-    currentlyAskedQuestionObject.type == "range" ||
-    currentlyAskedQuestionObject.type == "boolean"
+    currentlyAskedQuestionObject.type == 'number' ||
+    currentlyAskedQuestionObject.type == 'range' ||
+    currentlyAskedQuestionObject.type == 'boolean'
   ) {
     // To show the graph before, as it takes a while to load
     printGraph(currentlyAskedQuestionObject.key, ctx, 0, null, false);
@@ -261,11 +265,11 @@ function insertNewValue(parsedUserValue, ctx, key, type, fakeDate = null) {
 
   let row = {
     Timestamp: dateToAdd.valueOf(),
-    YearMonth: dateToAdd.format("YYYYMM"),
-    YearWeek: dateToAdd.format("YYYYWW"),
+    YearMonth: dateToAdd.format('YYYYMM'),
+    YearWeek: dateToAdd.format('YYYYWW'),
     Year: dateToAdd.year(),
     Quarter: dateToAdd.quarter(),
-    Month: dateToAdd.format("MM"), // to get the leading 0 needed for Google Data Studio
+    Month: dateToAdd.format('MM'), // to get the leading 0 needed for Google Data Studio
     Day: dateToAdd.date(),
     Hour: dateToAdd.hours(),
     Minute: dateToAdd.minutes(),
@@ -273,16 +277,16 @@ function insertNewValue(parsedUserValue, ctx, key, type, fakeDate = null) {
     Key: key,
     Question: questionText,
     Type: type,
-    Value: parsedUserValue
+    Value: parsedUserValue,
   };
 
   rawDataSheet.addRow(row, function(error, row) {
     if (error) {
       console.error(error);
       if (ctx) {
-        ctx.reply("Error saving value: " + error);
-        ctx.reply("Value: " + parsedUserValue);
-        ctx.reply("Key: " + key);
+        ctx.reply('Error saving value: ' + error);
+        ctx.reply('Value: ' + parsedUserValue);
+        ctx.reply('Key: ' + key);
       }
     }
 
@@ -307,14 +311,14 @@ function insertNewValue(parsedUserValue, ctx, key, type, fakeDate = null) {
 
 function parseUserInput(ctx, text = null) {
   if (ctx.update.message.from.username != process.env.TELEGRAM_USER_ID) {
-    console.error("Invalid user " + ctx.update.message.from.username);
+    console.error('Invalid user ' + ctx.update.message.from.username);
     return;
   }
 
   if (currentlyAskedQuestionMessageId == null) {
     ctx
       .reply(
-        "Sorry, I forgot the question I asked, this usually means it took too long for you to respond, please trigger the question again by running the `/` command"
+        'Sorry, I forgot the question I asked, this usually means it took too long for you to respond, please trigger the question again by running the `/` command',
       )
       .then(({ message_id }) => {
         sendAvailableCommands(ctx);
@@ -332,20 +336,20 @@ function parseUserInput(ctx, text = null) {
 
   let parsedUserValue = null;
 
-  if (currentlyAskedQuestionObject.type != "text") {
+  if (currentlyAskedQuestionObject.type != 'text') {
     // First, see if it starts with emoji number, for which we have to do custom
     // parsing instead
     if (
-      currentlyAskedQuestionObject.type == "range" ||
-      currentlyAskedQuestionObject.type == "boolean"
+      currentlyAskedQuestionObject.type == 'range' ||
+      currentlyAskedQuestionObject.type == 'boolean'
     ) {
       let tryToParseNumber = parseInt(userValue[0]);
       if (!isNaN(tryToParseNumber)) {
         parsedUserValue = tryToParseNumber;
       } else {
         ctx.reply(
-          "Sorry, looks like your input is invalid, please enter a valid number from the selection",
-          Extra.inReplyTo(ctx.update.message.message_id)
+          'Sorry, looks like your input is invalid, please enter a valid number from the selection',
+          Extra.inReplyTo(ctx.update.message.message_id),
         );
       }
     }
@@ -355,8 +359,8 @@ function parseUserInput(ctx, text = null) {
       userValue = userValue.match(/^(\d+(\.\d+)?)$/);
       if (userValue == null) {
         ctx.reply(
-          "Sorry, looks like you entered an invalid number, please try again",
-          Extra.inReplyTo(ctx.update.message.message_id)
+          'Sorry, looks like you entered an invalid number, please try again',
+          Extra.inReplyTo(ctx.update.message.message_id),
         );
         return;
       }
@@ -366,31 +370,31 @@ function parseUserInput(ctx, text = null) {
     parsedUserValue = userValue; // raw value is fine
   }
 
-  if (currentlyAskedQuestionObject.type == "range") {
+  if (currentlyAskedQuestionObject.type == 'range') {
     // ensure the input is 0-6
     if (parsedUserValue < 0 || parsedUserValue > 6) {
       ctx.reply(
-        "Please enter a value from 0 to 6",
-        Extra.inReplyTo(ctx.update.message.message_id)
+        'Please enter a value from 0 to 6',
+        Extra.inReplyTo(ctx.update.message.message_id),
       );
       return;
     }
   }
 
   if (
-    currentlyAskedQuestionObject.type == "number" ||
-    currentlyAskedQuestionObject.type == "range" ||
-    currentlyAskedQuestionObject.type == "boolean"
+    currentlyAskedQuestionObject.type == 'number' ||
+    currentlyAskedQuestionObject.type == 'range' ||
+    currentlyAskedQuestionObject.type == 'boolean'
   ) {
     // To show potential streaks and the history
     printGraph(currentlyAskedQuestionObject.key, ctx, 5, parsedUserValue, true);
   }
 
   console.log(
-    "Got a new value: " +
+    'Got a new value: ' +
       parsedUserValue +
-      " for question " +
-      currentlyAskedQuestionObject.key
+      ' for question ' +
+      currentlyAskedQuestionObject.key,
   );
 
   if (
@@ -400,7 +404,7 @@ function parseUserInput(ctx, text = null) {
     // Check if there is a custom reply, and if, use that
     ctx.reply(
       currentlyAskedQuestionObject.replies[parsedUserValue],
-      Extra.inReplyTo(ctx.update.message.message_id)
+      Extra.inReplyTo(ctx.update.message.message_id),
     );
   }
 
@@ -408,7 +412,7 @@ function parseUserInput(ctx, text = null) {
     parsedUserValue,
     ctx,
     currentlyAskedQuestionObject.key,
-    currentlyAskedQuestionObject.type
+    currentlyAskedQuestionObject.type,
   );
 
   setTimeout(function() {
@@ -417,9 +421,9 @@ function parseUserInput(ctx, text = null) {
 }
 
 function sendAvailableCommands(ctx) {
-  ctx.reply("Available commands:").then(({ message_id }) => {
+  ctx.reply('Available commands:').then(({ message_id }) => {
     ctx.reply(
-      "\n\n/skip\n/report\n\n/" + Object.keys(config.userConfig).join("\n/")
+      '\n\n/skip\n/report\n\n/' + Object.keys(config.userConfig).join('\n/'),
     );
   });
 }
@@ -428,7 +432,7 @@ function saveLastRun(command) {
   lastRunSheet.getRows(
     {
       offset: 1,
-      limit: 100
+      limit: 100,
     },
     function(error, rows) {
       var updatedExistingRow = false;
@@ -446,23 +450,23 @@ function saveLastRun(command) {
       if (!updatedExistingRow) {
         let row = {
           Command: command,
-          LastRun: moment().valueOf() // unix timestamp
+          LastRun: moment().valueOf(), // unix timestamp
         };
         lastRunSheet.addRow(row, function(error, row) {
-          console.log("Stored timestamp of last run for " + command);
+          console.log('Stored timestamp of last run for ' + command);
         });
       }
-    }
+    },
   );
 }
 
 function initBot() {
-  console.log("Launching up Telegram bot...");
+  console.log('Launching up Telegram bot...');
 
-  bot.on(["document"], ctx => {
+  bot.on(['document'], ctx => {
     // This is used to import other historic data
     let fileId = ctx.update.message.document.file_id;
-    console.log("Received a file of ID " + fileId);
+    console.log('Received a file of ID ' + fileId);
 
     // Format:
     //
@@ -481,10 +485,10 @@ function initBot() {
 
         body = body.toString(); // needed for some reason
         console.log(body);
-        let sep = ";";
-        let dateFormat = "DD.MM.YYYY";
+        let sep = ';';
+        let dateFormat = 'DD.MM.YYYY';
 
-        let lines = body.split("\n");
+        let lines = body.split('\n');
 
         let header = lines[0].split(sep);
         let counter = 0;
@@ -496,13 +500,13 @@ function initBot() {
             for (let j = 1; j < line.length; j++) {
               let value = line[j].trim();
               let key = header[j].trim();
-              console.log(key + " for " + date.format() + " = " + value);
+              console.log(key + ' for ' + date.format() + ' = ' + value);
 
               // Hacky, as Google Docs API client only allows
               // single row inserts, and it would run out of calls otherwise
               let artificialWait = i * 10000 + j * 1200;
               setTimeout(function() {
-                insertNewValue(value, null, key, "number", date);
+                insertNewValue(value, null, key, 'number', date);
               }, artificialWait);
               counter++;
               if (artificialWait > longestWaitingTime) {
@@ -513,11 +517,11 @@ function initBot() {
         }
 
         ctx.reply(
-          "Succesfully triggered import process for " +
+          'Succesfully triggered import process for ' +
             counter +
-            " items... this might take a while. There is no confirmation message. The import process will take AT LEAST " +
+            ' items... this might take a while. There is no confirmation message. The import process will take AT LEAST ' +
             longestWaitingTime / 1000.0 / 60.0 +
-            " minutes"
+            ' minutes',
         );
       });
     });
@@ -537,53 +541,53 @@ function initBot() {
   // parse one-off commands:
   //
   // Those have to be above the regex match
-  bot.hears("/report", ctx => {
+  bot.hears('/report', ctx => {
     if (ctx.update.message.from.username != process.env.TELEGRAM_USER_ID) {
       return;
     }
 
-    console.log("Generating report...");
+    console.log('Generating report...');
     ctx
       .replyWithPhoto({
         url:
-          "https://datastudio.google.com/reporting/1a-1rVk-4ZFOg0WTNNGRvJDXMTNXpl5Uy/page/MpTm/thumbnail?sz=s3000"
+          'https://datastudio.google.com/reporting/1a-1rVk-4ZFOg0WTNNGRvJDXMTNXpl5Uy/page/MpTm/thumbnail?sz=s3000',
       })
       .then(({ message_id }) => {
-        ctx.reply("Full report: https://datastudio.google.com/s/uwV1-Pv9dk4");
+        ctx.reply('Full report: https://datastudio.google.com/s/uwV1-Pv9dk4');
       });
   });
 
-  bot.hears("/skip", ctx => {
+  bot.hears('/skip', ctx => {
     if (ctx.update.message.from.username != process.env.TELEGRAM_USER_ID) {
-      console.error("Invalid user " + ctx.update.message.from.username);
+      console.error('Invalid user ' + ctx.update.message.from.username);
       return;
     }
 
-    console.log("user is skipping this question");
+    console.log('user is skipping this question');
     ctx.reply(
-      "Okay, skipping question. If you see yourself skipping a question too often, maybe it's time to rephrase or remove it"
+      "Okay, skipping question. If you see yourself skipping a question too often, maybe it's time to rephrase or remove it",
     );
     triggerNextQuestionFromQueue(ctx);
   });
 
-  bot.hears("/skip_all", ctx => {
+  bot.hears('/skip_all', ctx => {
     if (ctx.update.message.from.username != process.env.TELEGRAM_USER_ID) {
       return;
     }
     currentlyAskedQuestionQueue = [];
-    ctx.reply("Okay, removing all questions that are currently in the queue");
+    ctx.reply('Okay, removing all questions that are currently in the queue');
   });
 
   bot.hears(/\/track (\w+)/, ctx => {
     if (ctx.update.message.from.username != process.env.TELEGRAM_USER_ID) {
-      console.error("Invalid user " + ctx.update.message.from.username);
+      console.error('Invalid user ' + ctx.update.message.from.username);
       return;
     }
 
     let toTrack = ctx.match[1];
     console.log(
-      "User wants to track a specific value, without the whole survey: " +
-        toTrack
+      'User wants to track a specific value, without the whole survey: ' +
+        toTrack,
     );
 
     let questionToAsk: QuestionToAsk = null;
@@ -601,14 +605,14 @@ function initBot() {
 
     if (questionToAsk) {
       currentlyAskedQuestionQueue = currentlyAskedQuestionQueue.concat(
-        questionToAsk
+        questionToAsk,
       );
       triggerNextQuestionFromQueue(ctx);
     } else {
       ctx.reply(
         "Sorry, I couldn't find the key `" +
           toTrack +
-          "`, please make sure it's not mispelled"
+          "`, please make sure it's not mispelled",
       );
     }
   });
@@ -619,19 +623,19 @@ function initBot() {
     }
 
     let key = ctx.match[1];
-    console.log("User wants to graph a specific value " + key);
+    console.log('User wants to graph a specific value ' + key);
 
     printGraph(key, ctx, 100, null, false);
   });
 
-  bot.on("location", ctx => {
+  bot.on('location', ctx => {
     if (ctx.update.message.from.username != process.env.TELEGRAM_USER_ID) {
       return;
     }
     if (currentlyAskedQuestionMessageId == null) {
       ctx
         .reply(
-          "Sorry, I forgot the question I asked, this usually means it took too long for you to respond, please trigger the question again by running the `/` command"
+          'Sorry, I forgot the question I asked, this usually means it took too long for you to respond, please trigger the question again by running the `/` command',
         )
         .then(({ message_id }) => {
           sendAvailableCommands(ctx);
@@ -643,11 +647,11 @@ function initBot() {
     let lng = location.longitude;
 
     let url =
-      "https://api.opencagedata.com/geocode/v1/json?q=" +
+      'https://api.opencagedata.com/geocode/v1/json?q=' +
       lat +
-      "+" +
+      '+' +
       lng +
-      "&key=" +
+      '&key=' +
       process.env.OPEN_CAGE_API_KEY;
 
     needle.get(url, function(error, response, body) {
@@ -655,65 +659,59 @@ function initBot() {
         console.error(error);
         return;
       }
-      let result = body["results"][0];
+      let result = body['results'][0];
 
       // we have some custom handling of the data here, as we get
       // so much useful data, that we want to insert more rows here
-      insertNewValue(lat, ctx, "locationLat", "number");
-      insertNewValue(lng, ctx, "locationLng", "number");
+      insertNewValue(lat, ctx, 'locationLat', 'number');
+      insertNewValue(lng, ctx, 'locationLng', 'number');
       insertNewValue(
-        result["components"]["country"],
+        result['components']['country'],
         ctx,
-        "locationCountry",
-        "text"
+        'locationCountry',
+        'text',
       );
       insertNewValue(
-        result["components"]["country_code"],
+        result['components']['country_code'],
         ctx,
-        "locationCountryCode",
-        "text"
+        'locationCountryCode',
+        'text',
       );
-      insertNewValue(result["formatted"], ctx, "locationAddress", "text");
+      insertNewValue(result['formatted'], ctx, 'locationAddress', 'text');
       insertNewValue(
-        result["components"]["continent"],
+        result['components']['continent'],
         ctx,
-        "locationContinent",
-        "text"
-      );
-      insertNewValue(
-        result["annotations"]["currency"]["name"],
-        ctx,
-        "locationCurrency",
-        "text"
+        'locationContinent',
+        'text',
       );
       insertNewValue(
-        result["annotations"]["timezone"]["short_name"],
+        result['annotations']['currency']['name'],
         ctx,
-        "timezone",
-        "text"
+        'locationCurrency',
+        'text',
+      );
+      insertNewValue(
+        result['annotations']['timezone']['short_name'],
+        ctx,
+        'timezone',
+        'text',
       );
 
-      let city = result["components"]["city"] || result["components"]["state"]; // vienna is not a city according to their API
-      insertNewValue(city, ctx, "locationCity", "text");
+      let city = result['components']['city'] || result['components']['state']; // vienna is not a city according to their API
+      insertNewValue(city, ctx, 'locationCity', 'text');
     });
 
     let today = moment();
-    if (moment().hours() < 10) {
+    if (moment().hours() < 6) {
       // this is being run after midnight,
       // as I have the tendency to stay up until later
       // we will fetch the weather from yesterday
-      today = moment().subtract("1", "day");
+      today = moment().subtract('1', 'day');
     }
 
-    let weatherURL =
-      "https://api.apixu.com/v1/history.json?key=" +
-      process.env.WEATHER_API_KEY +
-      "&q=" +
-      lat +
-      ";" +
-      lng +
-      "&dt=" +
-      today.format("YYYY-MM-DD");
+    const weatherURL = `https://api.darksky.net/forecast/${
+      process.env.DARK_SKY_API_KEY
+    }/${lat}/${lng}/${today.format('YYYY-MM-DD')}`;
 
     // we use the `/history` API so we get the average/max/min temps of the day instead of the current one (late at night)
     needle.get(weatherURL, function(error, response, body) {
@@ -722,28 +720,41 @@ function initBot() {
         return;
       }
 
-      let result = body["forecast"]["forecastday"][0];
-      let resultDay = result["day"];
-      insertNewValue(resultDay["avgtemp_c"], ctx, "weatherCelsius", "number");
-      insertNewValue(resultDay["totalprecip_mm"], ctx, "weatherRain", "number");
+      let result = body['daily']['data'][0];
+      let resultDay = result['day'];
       insertNewValue(
-        resultDay["avghumidity"],
+        result['temperatureHigh'],
         ctx,
-        "weatherHumidity",
-        "number"
+        'weatherCelsiusHigh',
+        'number',
       );
+      insertNewValue(
+        result['temperatureLow'],
+        ctx,
+        'weatherCelsiusLow',
+        'number',
+      );
+      insertNewValue(
+        result['precipAccumulation'],
+        ctx,
+        'weatherRain',
+        'number',
+      );
+      insertNewValue(result['humidity'], ctx, 'weatherHumidity', 'number');
+      insertNewValue(result['ozone'], ctx, 'weatherOzone', 'number');
+      insertNewValue(result['summary'], ctx, 'weatherSummary', 'text');
 
       let dayDurationHours =
-        moment("2000-01-01 " + result["astro"]["sunset"]).diff(
-          moment("2000-01-01 " + result["astro"]["sunrise"]),
-          "minutes"
+        moment(result['sunriseTime']).diff(
+          moment(result['sunsetTime']),
+          'minutes',
         ) / 60.0;
 
       insertNewValue(
         dayDurationHours,
         ctx, // hacky, we just pass this, so that we only sent a confirmation text once
-        "weatherHoursOfSunlight",
-        "number"
+        'weatherHoursOfSunlight',
+        'number',
       );
 
       // hacky, as at this point, the other http request might not be complete yet
@@ -762,7 +773,7 @@ function initBot() {
     let matchingCommandObject = config.userConfig[command];
 
     if (matchingCommandObject && matchingCommandObject.questions) {
-      console.log("User wants to run:");
+      console.log('User wants to run:');
       console.log(matchingCommandObject);
       saveLastRun(command);
       if (
@@ -771,13 +782,13 @@ function initBot() {
       ) {
         // Happens when the user triggers another survey, without having completed the first one yet
         ctx.reply(
-          "^ Okay, but please answer my previous question also, thanks ^",
-          Extra.inReplyTo(currentlyAskedQuestionMessageId)
+          '^ Okay, but please answer my previous question also, thanks ^',
+          Extra.inReplyTo(currentlyAskedQuestionMessageId),
         );
       }
 
       currentlyAskedQuestionQueue = currentlyAskedQuestionQueue.concat(
-        matchingCommandObject.questions.slice(0)
+        matchingCommandObject.questions.slice(0),
       ); // slice is a poor human's .clone basically
 
       if (currentlyAskedQuestionObject == null) {
@@ -792,8 +803,8 @@ function initBot() {
     }
   });
 
-  bot.start(ctx => ctx.reply("Welcome to FxLifeSheet"));
-  bot.on(["voice", "video_note"], ctx => {
+  bot.start(ctx => ctx.reply('Welcome to FxLifeSheet'));
+  bot.on(['voice', 'video_note'], ctx => {
     if (ctx.update.message.from.username != process.env.TELEGRAM_USER_ID) {
       return;
     }
@@ -806,30 +817,30 @@ function initBot() {
     console.log("Received voice with file ID '" + fileId + "'");
     ctx
       .reply(
-        "🦄 Received message, transcribing now...",
-        Extra.inReplyTo(ctx.message.message_id)
+        '🦄 Received message, transcribing now...',
+        Extra.inReplyTo(ctx.message.message_id),
       )
       .then(({ message_id }) => {
         transcribingMessageId = message_id;
       });
 
-    let transcribeURL = "https://bubbles-transcribe.herokuapp.com/transcribe";
-    transcribeURL += "?file_id=" + fileId;
-    transcribeURL += "&language=en-US";
-    transcribeURL += "&telegram_token=" + process.env.TELEGRAM_BOT_TOKEN;
+    let transcribeURL = 'https://bubbles-transcribe.herokuapp.com/transcribe';
+    transcribeURL += '?file_id=' + fileId;
+    transcribeURL += '&language=en-US';
+    transcribeURL += '&telegram_token=' + process.env.TELEGRAM_BOT_TOKEN;
 
     needle.get(transcribeURL, function(error, response, body) {
       if (error) {
         console.error(error);
-        ctx.reply("Error: " + error, Extra.inReplyTo(ctx.message.message_id));
+        ctx.reply('Error: ' + error, Extra.inReplyTo(ctx.message.message_id));
       }
-      let text = JSON.parse(body)["text"];
+      let text = JSON.parse(body)['text'];
 
       ctx.telegram.editMessageText(
         ctx.update.message.chat.id,
         transcribingMessageId,
         null,
-        text
+        text,
       );
 
       if (text != null && text.length > 5) {
@@ -840,11 +851,11 @@ function initBot() {
 
   bot.help(ctx =>
     ctx.reply(
-      "No in-bot help right now, for now please visit https://github.com/KrauseFx/FxLifeSheet"
-    )
+      'No in-bot help right now, for now please visit https://github.com/KrauseFx/FxLifeSheet',
+    ),
   );
-  bot.on("sticker", ctx => ctx.reply("Sorry, I don't support stickers"));
-  bot.hears("hi", ctx => ctx.reply("Hey there"));
+  bot.on('sticker', ctx => ctx.reply("Sorry, I don't support stickers"));
+  bot.hears('hi', ctx => ctx.reply('Hey there'));
 
   // has to be last
   bot.launch();

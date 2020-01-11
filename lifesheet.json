@@ -10,15 +10,16 @@
         "buttons": {
           "5": "pumped, energized",
           "4": "happy, excited",
-          "3": "good",
-          "2": "okay",
+          "3": "good, positive",
+          "2": "okay, doing fine",
           "1": "sad, unhappy",
-          "0": "nervous"
+          "0": "nervous, angry"
         },
         "replies": {
           "5": "💫 Awesome to hear, maybe take 2 minutes to reflect on why you're feeling great, and maybe add a note by running /track moodNotes",
-          "1": "Feeling down sometimes is okay. Maybe take 2 minutes to reflect on why you're not feeling better. Sending hugs 🤗🤗🤗 write them down using /track moodNotes",
-          "0": "Feeling down sometimes is okay. Maybe take 2 minutes to reflect on why you're not feeling better. Sending hugs 🤗🤗🤗 write them down using /track moodNotes"
+          "2": "😊 Great! It's absolutely okay to be 'fine' or 'okay' 👍",
+          "1": "Feeling down sometimes is okay. Sending hugs 🤗🤗🤗 \n Maybe take 2 minutes to reflect on why you're not feeling better, write them down using /track moodNotes",
+          "0": "Feeling down sometimes is okay. Sending hugs 🤗🤗🤗 \n Maybe take 2 minutes to reflect on why you're not feeling better, write them down using /track moodNotes"
         }
       }
     ]
@@ -84,11 +85,6 @@
         "type": "number"
       },
       {
-        "key": "fitbitTimeAsleep",
-        "question": "How many hours asleep were you according to Fitbit (round to nearest 30mins)",
-        "type": "number"
-      },
-      {
         "key": "sleepWokeUpYourself",
         "question": "Did you wake up by yourself?",
         "type": "boolean"
@@ -130,7 +126,7 @@
       },
       {
         "key": "weight",
-        "question": "Current weight, in lbs",
+        "question": "Current weight, in kg... /skip",
         "type": "number"
       }
     ]
@@ -251,7 +247,7 @@
       },
       {
         "key": "caffeineLastDrink",
-        "question": "When was your last caffein drink?",
+        "question": "When was your last caffeine drink?",
         "type": "range",
         "buttons": {
           "5": "Before 3pm",
@@ -309,23 +305,13 @@
         }
       },
       {
-        "key": "creatineIntake",
-        "question": "Did you take your creatine today?",
-        "type": "boolean"
-      },
-      {
         "key": "fishoilIntake",
         "question": "Did you take your fish oil today?",
         "type": "boolean"
       },
       {
         "key": "dailySteps",
-        "question": "How many steps did you take according to Apple Health?",
-        "type": "number"
-      },
-      {
-        "key": "fitbitRestingHeartRate",
-        "question": "What was today's resting heart rate according to FitBit",
+        "question": "How many steps did you take according to Google Fit?",
         "type": "number"
       },
       {
@@ -442,7 +428,7 @@
       },
       {
         "key": "minutesRead",
-        "question": "How many minutes of Audible did you listen to today?",
+        "question": "How many minutes of fiction or non-fiction reading did you fit in today?",
         "type": "number"
       },
       {
