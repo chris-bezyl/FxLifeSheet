@@ -711,7 +711,9 @@ function initBot() {
 
     const weatherURL = `https://api.darksky.net/forecast/${
       process.env.DARK_SKY_API_KEY
-    }/${lat},${lng},${today.unix()}`;
+    }/${lat},${lng},${today.unix()}?exclude=minutely,hourly,currently,flags,alerts&units=auto`;
+
+    console.log('Getting weather from Dark Sky API, using: ', weatherURL);
 
     // we use the `/history` API so we get the average/max/min temps of the day instead of the current one (late at night)
     needle.get(weatherURL, function(error, response, body) {
@@ -745,10 +747,9 @@ function initBot() {
       insertNewValue(result['summary'], ctx, 'weatherSummary', 'text');
 
       let dayDurationHours =
-        moment(result['sunriseTime']).diff(
-          moment(result['sunsetTime']),
-          'minutes',
-        ) / 60.0;
+        moment
+          .unix(result['sunriseTime'])
+          .diff(moment.unix(result['sunsetTime']), 'minutes') / 60.0;
 
       insertNewValue(
         dayDurationHours,
