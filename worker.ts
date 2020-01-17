@@ -858,7 +858,7 @@ function initBot() {
   );
   bot.on('sticker', async ctx => {
     ctx.reply("Sorry, I don't support stickers");
-    const sticker = ctx.message;
+    const sticker = ctx.message.sticker;
     // ctx.reply(sticker.emoji);
     console.log({ sticker });
     console.log({ ctx });
