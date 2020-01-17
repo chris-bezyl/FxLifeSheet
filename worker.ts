@@ -856,11 +856,12 @@ function initBot() {
       'No in-bot help right now, for now please visit https://github.com/KrauseFx/FxLifeSheet',
     ),
   );
-  bot.on('sticker', ctx => {
+  bot.on('sticker', async ctx => {
     ctx.reply("Sorry, I don't support stickers");
     const sticker = ctx.message;
     ctx.reply(sticker.emoji);
-    const stickerSet = ctx.telegram.getStickerSet(ctx.set_name);
+    const stickerSet = await ctx.telegram.getStickerSet(ctx.set_name);
+    console.log(stickerSet);
     const randomStickerIdx = Math.floor(
       Math.random() * Math.floor(stickerSet.stickers.length),
     );
