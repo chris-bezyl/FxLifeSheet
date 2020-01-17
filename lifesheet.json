@@ -182,15 +182,15 @@
       },
       {
         "key": "macroAdherence",
-        "question": "How closely did you follow today's macro tracking?",
+        "question": "How healthy did you eat today?",
         "type": "range",
         "buttons": {
-          "5": "Was able to scale 90% of my food",
-          "4": "One outside meal, rest scaled",
-          "3": "Two meals outside, rest scaled",
+          "5": "90% of my food was homemade",
+          "4": "One outside meal, rest homemade",
+          "3": "Two meals outside, rest homemade",
           "2": "Ate outside only",
-          "1": "Didn't track, but used mind",
-          "0": "Just ate whatever"
+          "1": "Poor food choices generally",
+          "0": "Ate junk food and all sorts"
         }
       },
       {
@@ -199,9 +199,9 @@
         "type": "range",
         "buttons": {
           "5": "Felt full and energized",
-          "4": "Macros aligned perfectly with my hunger",
-          "3": "Comfortably matched my macros",
-          "2": "Managed to squeeze in those macros",
+          "4": "Good food aligned perfectly with my hunger",
+          "3": "Comfortably managed only on planned meals",
+          "2": "Managed to only eat planned food",
           "1": "Felt hungry here and then",
           "0": "Stomach growling parts of the day"
         }
@@ -305,6 +305,11 @@
         }
       },
       {
+        "key": "vitaminDIntake",
+        "question": "Did you take your Vitamin D today?",
+        "type": "boolean"
+      },
+      {
         "key": "fishoilIntake",
         "question": "Did you take your fish oil today?",
         "type": "boolean"
@@ -312,11 +317,6 @@
       {
         "key": "dailySteps",
         "question": "How many steps did you take according to Google Fit?",
-        "type": "number"
-      },
-      {
-        "key": "numberOfSwarmCheckins",
-        "question": "How many Swarm check-ins did you do today? Feel free to ignore train stations and other smaller check-ins, it's about how many actual places (restaurants, bars, sights) you visited today",
         "type": "number"
       },
       {
