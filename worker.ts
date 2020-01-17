@@ -860,7 +860,7 @@ function initBot() {
     ctx.reply("Sorry, I don't support stickers");
     const sticker = ctx.message;
     ctx.reply(sticker.emoji);
-    const stickerSet = telegram.getStickerSet(ctx.set_name);
+    const stickerSet = ctx.telegram.getStickerSet(ctx.set_name);
     const randomStickerIdx = Math.floor(
       Math.random() * Math.floor(stickerSet.stickers.length),
     );
