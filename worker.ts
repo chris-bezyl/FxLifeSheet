@@ -859,9 +859,7 @@ function initBot() {
   bot.on('sticker', async ctx => {
     ctx.reply("Sorry, I don't support stickers");
     const sticker = ctx.message.sticker;
-    // ctx.reply(sticker.emoji);
-    console.log({ sticker });
-    console.log({ ctx });
+    ctx.reply(sticker.emoji);
     let stickerSet;
     try {
       stickerSet = await ctx.telegram.getStickerSet(sticker.set_name);
@@ -870,7 +868,7 @@ function initBot() {
         Math.random() * Math.floor(stickerSet.stickers.length),
       );
       ctx.replyWithSticker({
-        sticker: stickerSet[randomStickerIdx].file_id,
+        sticker: stickerSet.stickers[randomStickerIdx].file_id,
       });
     } catch (err) {
       console.log(err);
