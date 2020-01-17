@@ -856,7 +856,18 @@ function initBot() {
       'No in-bot help right now, for now please visit https://github.com/KrauseFx/FxLifeSheet',
     ),
   );
-  bot.on('sticker', ctx => ctx.reply("Sorry, I don't support stickers"));
+  bot.on('sticker', ctx => {
+    ctx.reply("Sorry, I don't support stickers");
+    const sticker = ctx.message;
+    ctx.reply(sticker.emoji);
+    const stickerSet = telegram.getStickerSet(ctx.set_name);
+    const randomStickerIdx = Math.floor(
+      Math.random() * Math.floor(stickerSet.stickers.length),
+    );
+    ctx.replyWithSticker({
+      sticker: stickerSet[randomStickerIdx].file_id,
+    });
+  });
   bot.hears('hi', ctx => ctx.reply('Hey there'));
 
   // has to be last
