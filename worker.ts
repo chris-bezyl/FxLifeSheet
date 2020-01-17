@@ -859,7 +859,9 @@ function initBot() {
   bot.on('sticker', async ctx => {
     ctx.reply("Sorry, I don't support stickers");
     const sticker = ctx.message;
-    ctx.reply(sticker.emoji);
+    // ctx.reply(sticker.emoji);
+    console.log({ sticker });
+    console.log({ ctx });
     let stickerSet;
     try {
       stickerSet = await ctx.telegram.getStickerSet(sticker.set_name);
