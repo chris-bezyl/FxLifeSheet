@@ -871,7 +871,9 @@ function initBot() {
       console.log({ stickerFile });
       console.log(stickerFile.file_id);
       ctx.replyWithSticker({
-        file_id: stickerFile.file_id,
+        // file_id: stickerFile.file_id,
+        sticker: stickerFile,
+        // file: stickerFile.file_id,
       });
     } catch (err) {
       console.log(err);
