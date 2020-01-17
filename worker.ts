@@ -867,8 +867,11 @@ function initBot() {
       const randomStickerIdx = Math.floor(
         Math.random() * Math.floor(stickerSet.stickers.length),
       );
+      const stickerFile = stickerSet.stickers[randomStickerIdx];
+      console.log({ stickerFile });
+      console.log(stickerFile.file_id);
       ctx.replyWithSticker({
-        sticker: stickerSet.stickers[randomStickerIdx].file_id,
+        sticker: stickerFile.file_id,
       });
     } catch (err) {
       console.log(err);
