@@ -865,7 +865,6 @@ function initBot() {
       const validStickerFileIds = stickerFileIds.filter(stickerFileId => {
         return stickerFileId !== recievedSticker.file_id;
       });
-      console.log(validStickerFileIds);
       let randomStickerIdx = Math.floor(
         Math.random() * Math.floor(validStickerFileIds.length),
       );
