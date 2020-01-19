@@ -485,8 +485,8 @@ function initBot() {
 
         body = body.toString(); // needed for some reason
         console.log(body);
-        let sep = ';';
-        let dateFormat = 'DD.MM.YYYY';
+        let sep = ',';
+        let dateFormat = 'DD.MM.YYYY HH:mm';
 
         let lines = body.split('\n');
 
