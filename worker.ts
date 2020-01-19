@@ -855,17 +855,21 @@ function initBot() {
   bot.on('sticker', async ctx => {
     const recievedSticker = ctx.message.sticker;
     ctx.reply(recievedSticker.emoji);
-    let stickerSet;
     try {
-      stickerSet = await ctx.telegram.getStickerSet(recievedSticker.set_name);
-      const stickerFileIds = stickerSet.stickers.map(sticker => {
-        if (sticker.file_id !== recievedSticker.file_id) return sticker.file_id;
-      });
-      console.log(stickerFileIds);
-      let randomStickerIdx = Math.floor(
-        Math.random() * Math.floor(stickerFileIds.length),
+      const stickerSet = await ctx.telegram.getStickerSet(
+        recievedSticker.set_name,
       );
-      let stickerFileId = stickerFileIds[randomStickerIdx];
+      const stickerFileIds = stickerSet.stickers.map(
+        sticker => sticker.file_id,
+      );
+      const validStickerFileIds = stickerFileIds.filter(stickerFileId => {
+        return stickerFileId !== recievedSticker.file_id;
+      });
+      console.log(validStickerFileIds);
+      let randomStickerIdx = Math.floor(
+        Math.random() * Math.floor(validStickerFileIds.length),
+      );
+      let stickerFileId = validStickerFileIds[randomStickerIdx];
       ctx.replyWithSticker(stickerFileId);
     } catch (err) {
       console.log(err);
