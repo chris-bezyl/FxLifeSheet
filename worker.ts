@@ -859,8 +859,9 @@ function initBot() {
     try {
       stickerSet = await ctx.telegram.getStickerSet(recievedSticker.set_name);
       const stickerFileIds = stickerSet.stickers.map(sticker => {
-        if (sticker.file_id !== sticker.file_id) return sticker.file_id;
+        if (sticker.file_id !== recievedSticker.file_id) return sticker.file_id;
       });
+      console.log(stickerFileIds);
       let randomStickerIdx = Math.floor(
         Math.random() * Math.floor(stickerFileIds.length),
       );
