@@ -805,7 +805,7 @@ function initBot() {
     }
   });
 
-  bot.start(ctx => ctx.reply('Welcome to FxLifeSheet'));
+  bot.start(ctx => ctx.reply('Welcome to LifeSheet'));
   bot.on(['voice', 'video_note'], ctx => {
     if (ctx.update.message.from.username != process.env.TELEGRAM_USER_ID) {
       return;
@@ -851,30 +851,25 @@ function initBot() {
     });
   });
 
-  bot.help(ctx =>
-    ctx.reply(
-      'No in-bot help right now, for now please visit https://github.com/KrauseFx/FxLifeSheet',
-    ),
-  );
+  bot.help(ctx => ctx.reply('No in-bot help right now'));
   bot.on('sticker', async ctx => {
-    ctx.reply("Sorry, I don't support stickers");
-    const sticker = ctx.message.sticker;
-    ctx.reply(sticker.emoji);
+    const recievedSticker = ctx.message.sticker;
+    ctx.reply(recievedSticker.emoji);
     let stickerSet;
     try {
-      stickerSet = await ctx.telegram.getStickerSet(sticker.set_name);
-      console.log(stickerSet);
-      const randomStickerIdx = Math.floor(
-        Math.random() * Math.floor(stickerSet.stickers.length),
+      stickerSet = await ctx.telegram.getStickerSet(recievedSticker.set_name);
+      const stickerFileIds = stickerSet.stickers.map(sticker => {
+        if (sticker.file_id !== sticker.file_id) return sticker.file_id;
+      });
+      let randomStickerIdx = Math.floor(
+        Math.random() * Math.floor(stickerFileIds.length),
       );
-      const stickerFile = stickerSet.stickers[randomStickerIdx];
-      console.log({ stickerFile });
-      console.log(stickerFile.file_id);
-      ctx.replyWithSticker(stickerFile.file_id);
+      let stickerFileId = stickerFileIds[randomStickerIdx];
+      ctx.replyWithSticker(stickerFileId);
     } catch (err) {
       console.log(err);
+      ctx.reply('Sorry, no matching stickers found...');
     }
-    ctx.reply('Sorry, no matching stickers found...');
   });
   bot.hears('hi', ctx => ctx.reply('Hey there'));
 

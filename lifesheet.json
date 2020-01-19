@@ -320,6 +320,16 @@
         "type": "number"
       },
       {
+        "key": "moveMinutes",
+        "question": "How many move minutes did you hit according to Google Fit?",
+        "type": "number"
+      },
+      {
+        "key": "heartPoints",
+        "question": "How many heart points did you hit according to Google Fit?",
+        "type": "number"
+      },
+      {
         "question": "👥 Let's talk social life",
         "type": "header"
       },
@@ -451,9 +461,9 @@
         "type": "boolean"
       },
       {
-        "key": "numberOfWorkMeetings",
-        "question": "How many work meetings did you have today? This includes work-related phone calls",
-        "type": "number"
+        "key": "filmsTVWatched",
+        "question": "Do you want to note any films or TV in particular? /skip",
+        "type": "text"
       },
       {
         "key": "numberOfPersonalMeetings",
@@ -654,7 +664,7 @@
       },
       {
         "key": "openTrelloTasks",
-        "question": "How many open todos do you currently have? Take from https://whereisfelix.today",
+        "question": "How many open todos do you currently have? Take from https://trello.com/chris_bezyl/boards",
         "type": "number"
       },
       {
