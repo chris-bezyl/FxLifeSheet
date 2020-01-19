@@ -870,11 +870,7 @@ function initBot() {
       const stickerFile = stickerSet.stickers[randomStickerIdx];
       console.log({ stickerFile });
       console.log(stickerFile.file_id);
-      ctx.replyWithSticker({
-        id: stickerFile.file_id,
-        // sticker: stickerFile,
-        // file: stickerFile.file_id,
-      });
+      ctx.replyWithSticker(stickerFile.file_id);
     } catch (err) {
       console.log(err);
     }
