@@ -197,6 +197,9 @@ function triggerNextQuestionFromQueue(ctx) {
       [getButtonText('0')],
     ];
     shuffleArray(allButtons);
+    allButtons[0].push(allButtons.pop()[0]);
+    allButtons[1].push(allButtons.pop()[0]);
+    allButtons[2].push(allButtons.pop()[0]);
     keyboard = Markup.keyboard(allButtons)
       .oneTime()
       .extra();
@@ -483,46 +486,52 @@ function initBot() {
           return;
         }
 
-        body = body.toString(); // needed for some reason
-        console.log(body);
-        let sep = ',';
-        let dateFormat = 'DD.MM.YYYY HH:mm';
+        try {
+          body = body.toString(); // needed for some reason
+          console.log(body);
+          let sep = ',';
+          let dateFormat = 'DD.MM.YYYY HH:mm';
 
-        let lines = body.split('\n');
+          let lines = body.split('\n');
 
-        let header = lines[0].split(sep);
-        let counter = 0;
-        let longestWaitingTime = 0;
-        for (let i = 1; i < lines.length; i++) {
-          let line = lines[i].split(sep);
-          if (line.length > 1) {
-            let date = moment(line[0].trim(), dateFormat);
-            for (let j = 1; j < line.length; j++) {
-              let value = line[j].trim();
-              let key = header[j].trim();
-              console.log(key + ' for ' + date.format() + ' = ' + value);
+          let header = lines[0].split(sep);
+          let counter = 0;
+          let longestWaitingTime = 0;
+          for (let i = 1; i < lines.length; i++) {
+            let line = lines[i].split(sep);
+            if (line.length > 1) {
+              let date = moment(line[0].trim(), dateFormat);
+              for (let j = 1; j < line.length; j++) {
+                let value = line[j].trim();
+                let key = header[j].trim();
+                console.log(key + ' for ' + date.format() + ' = ' + value);
 
-              // Hacky, as Google Docs API client only allows
-              // single row inserts, and it would run out of calls otherwise
-              let artificialWait = i * 10000 + j * 1200;
-              setTimeout(function() {
-                insertNewValue(value, null, key, 'number', date);
-              }, artificialWait);
-              counter++;
-              if (artificialWait > longestWaitingTime) {
-                longestWaitingTime = artificialWait;
+                // Hacky, as Google Docs API client only allows
+                // single row inserts, and it would run out of calls otherwise
+                let artificialWait = i * 10000 + j * 1200;
+                setTimeout(function() {
+                  insertNewValue(value, null, key, 'number', date);
+                }, artificialWait);
+                counter++;
+                if (artificialWait > longestWaitingTime) {
+                  longestWaitingTime = artificialWait;
+                }
               }
             }
           }
+          ctx.reply(
+            'Succesfully triggered import process for ' +
+              counter +
+              ' items... this might take a while. There is no confirmation message. The import process will take AT LEAST ' +
+              longestWaitingTime / 1000.0 / 60.0 +
+              ' minutes',
+          );
+        } catch (err) {
+          console.log(err);
+          ctx.reply(
+            `Could not process CSV file, perhaps this error will help:/n ${err.message}`,
+          );
         }
-
-        ctx.reply(
-          'Succesfully triggered import process for ' +
-            counter +
-            ' items... this might take a while. There is no confirmation message. The import process will take AT LEAST ' +
-            longestWaitingTime / 1000.0 / 60.0 +
-            ' minutes',
-        );
       });
     });
   });
