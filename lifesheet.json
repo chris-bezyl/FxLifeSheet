@@ -315,6 +315,11 @@
         "type": "boolean"
       },
       {
+        "key": "woreRetainer",
+        "question": "Are you wearing your retainer to bed?",
+        "type": "boolean"
+      },
+      {
         "key": "dailySteps",
         "question": "How many steps did you take according to Google Fit?",
         "type": "number"
